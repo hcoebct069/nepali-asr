@@ -7,6 +7,8 @@ pandas>=0.8
 sympy>=0.7
 nose>=1.1
 scipy>=0.1
+pyside>=1.2
+
 
 #Requirements - Sound Reading
 
