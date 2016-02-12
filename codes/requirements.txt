@@ -6,4 +6,8 @@ ipython>=0.13
 pandas>=0.8
 sympy>=0.7
 nose>=1.1
-scipy>=0.10
+scipy>=0.1
+
+#Requirements - Sound Reading
+
+pysoundfile>=0.8
