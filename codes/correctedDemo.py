@@ -60,7 +60,7 @@ lastFrame = len(frames) -1
 padder = len(frames[lastFrame]) % 80
 frames[lastFrame].extend([0] * padder)
 
-pprint(frames)
+#pprint(frames)
 
 #Use STE and ZCR on each frame. 
 
