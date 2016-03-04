@@ -161,3 +161,9 @@ plt.clf()
 # E-flat : DString, (1) at First Fret 
 # B-flat : BString, (1) at Third Fret
 # 
+# 
+# 
+# 
+# 
+# Check out: https://www.asee.org/documents/zones/zone1/2008/student/ASEE12008_0044_paper.pdf (Downloaded) for detailled stuff
+# Use that code
