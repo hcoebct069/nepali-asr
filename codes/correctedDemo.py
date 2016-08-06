@@ -54,11 +54,11 @@ frame_size = 200
 
 frames = []
 
-for i in range(0, len(list_data), frame_step):
+for i in range(0, len(list_data), frame_size):
 	frames.append(list_data[i:i+frame_size])
 
 lastFrame = len(frames) -1
-padder = len(frames[lastFrame]) % 80
+padder = len(frames[lastFrame]) % 200
 frames[lastFrame].extend([0] * padder)
 
 #pprint(frames)
@@ -127,13 +127,40 @@ pprint(len(frames))
 
 #plot frame
 
-pprint(vad_multiplier)
+# print(frames)
 
 multiplied = [x*y for x, y in zip(frames, vad_multiplier)]
 
-pprint(multiplied)
+# print(multiplied)
+#plt.plot(list(multiplied)) #whyTF
 
-#plt.plot(multiplied) # <= convert this to frame
+
+#The following routine checks if there
+#is a list and if list convert it to zero
+#or append likewise
+
+for index, each_multiplied_frame in enumerate(multiplied):
+	if(len(each_multiplied_frame) == 0):
+		multiplied[index] = [0]*frame_size
+
+#print(multiplied)
+
+#flatten multiplied 
+
+flattened_multiplied = []
+for each_multiplied_frame in multiplied:
+	flattened_multiplied.extend(each_multiplied_frame)
+
+# print(flattened_multiplied)
+
+#assert(len(flattened_multiplied) == len(frame)) # <-- error?
+pprint(len(flattened_multiplied))
+# multiplied_plottable = []
+# for each_multiplied in multiplied:
+# 	if(is_array(multiplied_plottable)
+# 	multiplied_plottable.append()
+
+plt.plot(flattened_multiplied) # <= convert this to frame
 plt.plot(vad_multiplier)
 plt.savefig('vad_multiplier_all.png')
 plt.clf()
