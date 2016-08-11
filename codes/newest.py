@@ -10,6 +10,8 @@ from math import *
 #For MFCC
 from scipy.fftpack import dct
 
+from python_speech_features import mfcc;
+
 
 
 stereo_audio_data, sample_rate = sf.read('../recordings/all.ogg')
@@ -123,6 +125,17 @@ pprint(indexes)
 
 #Framing, each frame starts from 80th sample, with size 200
 
+#Using MFCC library, we can eradicate the following code:
+#
+
+mfcc_feat = mfcc(numpy.asarray(multiplied), sample_rate);
+pprint(mfcc_feat);
+pprint(len(mfcc_feat[0]))
+
+'''
+
+
+
 overlap_frames = []
 for i in range(0, len(multiplied), 80):
 	overlap_frames.append(multiplied[i:i+200])
@@ -201,3 +214,22 @@ for each_frame in overlap_frames:
 #
 #Problem is in filterbank creation
 #https://github.com/jameslyons/python_speech_features <-- Use this 
+
+'''
+
+'''
+Create HMM model using yahmm
+
+Each number's model will have 13 state with Normal Distribution
+Randomly assign all transition values and Normal Distribution Parameter
+
+Use MFCCs as training data and train the model to improve performance
+
+BONUS points: Store the trainned HMMs (in file?)
+
+To test, calculate the log probability for each word and choose maximum. 
+
+Project Completed! (Give me one night of pure coding!)
+
+
+'''

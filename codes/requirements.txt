@@ -13,3 +13,9 @@ pyside>=1.2
 #Requirements - Sound Reading
 
 pysoundfile>=0.8
+
+#Requirements - MFCC Stuff
+python-speech-features>=0.4
+
+#YAHMM stuff
+yahmm>=1.1.3
