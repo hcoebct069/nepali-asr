@@ -231,5 +231,15 @@ To test, calculate the log probability for each word and choose maximum.
 
 Project Completed! (Give me one night of pure coding!)
 
+Ok, I got it wrong, no big deal! 
+
+I got it right again,
+
+Don't create 13 states, create 3 or 4, but assign each state a GMM  (Multivariate) of dimension 13
+and then train matching the numbers. 
+
+[ [[13],[13],[13]],[[13],[13],[13]],[[13],[13],[13]],[[13],[13],[13]] ]
+
+
 
 '''
