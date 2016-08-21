@@ -10,7 +10,9 @@ from math import *
 #For MFCC
 from scipy.fftpack import dct
 
-from python_speech_features import mfcc;
+from python_speech_features import mfcc
+
+from yahmm import *
 
 
 
@@ -243,3 +245,90 @@ and then train matching the numbers.
 
 
 '''
+
+# mfcc_feat contains the 13-dimensional array
+# 
+
+# In future replace the following code to search a directory for predefined library and do stuffs
+# 
+
+model = [];
+model.append(Model(name = "zero")) #0
+model.append(Model(name = "one")) #1
+model.append(Model(name = "two")) #2
+model.append(Model(name = "three")) #3
+model.append(Model(name = "four")) #4
+model.append(Model(name = "five")) #5
+model.append(Model(name = "six")) #6
+model.append(Model(name = "seven")) #7
+model.append(Model(name = "eight")) #8
+model.append(Model(name = "nine")) #9
+
+# The word length of every nepali digits can be accumulated on 3 words, so selecting 3 states
+
+for each_model in model:
+	s1 = State(MultivariateDistribution([NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2)]))
+	s2 = State(MultivariateDistribution([NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2)]))
+	s3 = State(MultivariateDistribution([NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2)]))
+	each_model.add_states([s1, s2, s3])
+	each_model.add_transition(each_model.start, s1, 1)
+	each_model.add_transition(s1, s1, 0.3)
+	each_model.add_transition(s1,s2, 0.7)
+	each_model.add_transition(s2,s2,0.4)
+	each_model.add_transition(s2,s3,0.6)
+	each_model.add_transition(s3,s3,0.45)
+	each_model.add_transition(s3, each_model.end, 0.55)
+	each_model.bake()
+
+
+
+#Start Comment Block
+'''
+# For Debugging Purposes
+# Wow, So this means that we can train with the given flat MFCC data 
+# and test with that too.1
+
+check_list = [1,2,3,4,5,6,7,8,9,10,11,12,13];
+for each_model in model:
+	each_model.train([[check_list,check_list,check_list,check_list,check_list,check_list,check_list,check_list,check_list,check_list,check_list,check_list]])
+	#pprint("Model Log Probability for given Sequence")
+	#pprint("=================")
+	#pprint(a)
+
+
+
+'''
+#Stop Comment Block
+
+#Start Comment Block
+'''
+# For Debugging Purposes
+# Since this is an infinte generator, the sample size is random. 
+# This generally should mean yahmm supports multi-dimensional stuff
+# And based on previous debugging test, it is now known that we can test and train on the given sequence of MFCC directly
+# :)
+
+for each_model in model:
+	pprint("Printing Model now ")
+	pprint("=============")
+	pprint(len(each_model.sample()))
+
+'''
+#Creation of HMMs complete, now train it
+#
+#Check for folder, data > training > (zero, ... nine)
+#Use loop to train
+#
+#
+#For testing
+#
+#Check for folder, data > testing > (zero, ... nine)
+#
+#Test how many files in zero is correctly predicted as zero, and so on.. 
+
+##After training, look in yahmm docs and find a way to store those in a file
+#Write a seperate module in GUI to load those HMM files and use that in testing data 
+
+
+
+
