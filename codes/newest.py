@@ -265,6 +265,9 @@ model.append(Model(name = "eight")) #8
 model.append(Model(name = "nine")) #9
 
 # The word length of every nepali digits can be accumulated on 3 words, so selecting 3 states
+# Assigning Flat initial probabilities (transition, and pdfs)
+# Assuming Gaussian Mixture Model (Multi[13]-Dimensional Gaussian (Normal) Distribution <-- because the number of cepstral coefficent is 13)
+# 
 
 for each_model in model:
 	s1 = State(MultivariateDistribution([NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2),NormalDistribution(.3,.2)]))
@@ -291,9 +294,10 @@ for each_model in model:
 check_list = [1,2,3,4,5,6,7,8,9,10,11,12,13];
 for each_model in model:
 	each_model.train([[check_list,check_list,check_list,check_list,check_list,check_list,check_list,check_list,check_list,check_list,check_list,check_list]])
-	#pprint("Model Log Probability for given Sequence")
-	#pprint("=================")
-	#pprint(a)
+	a = each_model.log_probability([check_list,check_list,check_list,check_list,check_list,check_list,check_list,check_list,check_list,check_list,check_list,check_list])
+	pprint("Model Log Probability for given Sequence")
+	pprint("=================")
+	pprint(a)
 
 
 
