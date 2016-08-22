@@ -14,125 +14,130 @@ from python_speech_features import mfcc
 
 from yahmm import *
 
+#For file stuff
+import os
 
 
-stereo_audio_data, sample_rate = sf.read('../recordings/all.ogg')
-mono_audio_data = stereo_audio_data[:,1] #uses 2nd channel :) 
-data = list(mono_audio_data)
 
-#Convert data into matrix of frames
-#
+def getMFCCFromFile(file_path='../recordings/all.ogg'):
+	stereo_audio_data, sample_rate = sf.read(file_path)
+	mono_audio_data = stereo_audio_data[:,1] #uses 2nd channel :) 
+	data = list(mono_audio_data)
 
-print(len(data))
+	#Convert data into matrix of frames
+	#
 
-frames = []
+	print(len(data))
 
-for i in range(0, len(data), 200):
-	frames.append(data[i:i+200])
+	frames = []
 
-
-lastFrame = len(frames) -1
-padder = 200 - len(frames[lastFrame]) % 200
-pprint(padder)
-frames[lastFrame].extend([0] * padder)
-print(len(frames))
-
-window = 1/200 #frame size  ==> w(n) = 1/2N
-
-def sgn(val):
-	if(val >= 0):
-		return 1;
-	return -1;
-
-zcr = []
-
-for each_row in frames:
-	zcr_inner = 0;
-	for index, each_record in enumerate(each_row):
-		if (index == 0):
-			continue
-		zcr_inner = zcr_inner + abs(sgn(each_record) - sgn(each_row[index-1]))/400
-	zcr.append(zcr_inner);	
-
-ste = []
-
-for each_row in frames:
-	ste_inner = 0;
-	for index, each_record in enumerate(each_row):
-		ste_inner = ste_inner + ((each_record*(0.54 - 0.46 * cos(2*pi*(index+1)/199)))**2)
-	ste.append(ste_inner)
+	for i in range(0, len(data), 200):
+		frames.append(data[i:i+200])
 
 
-assert(len(ste) == len(zcr))
+	lastFrame = len(frames) -1
+	padder = 200 - len(frames[lastFrame]) % 200
+	pprint(padder)
+	frames[lastFrame].extend([0] * padder)
+	print(len(frames))
+
+	window = 1/200 #frame size  ==> w(n) = 1/2N
+
+	def sgn(val):
+		if(val >= 0):
+			return 1;
+		return -1;
+
+	zcr = []
+
+	for each_row in frames:
+		zcr_inner = 0;
+		for index, each_record in enumerate(each_row):
+			if (index == 0):
+				continue
+			zcr_inner = zcr_inner + abs(sgn(each_record) - sgn(each_row[index-1]))/400
+		zcr.append(zcr_inner);	
+
+	ste = []
+
+	for each_row in frames:
+		ste_inner = 0;
+		for index, each_record in enumerate(each_row):
+			ste_inner = ste_inner + ((each_record*(0.54 - 0.46 * cos(2*pi*(index+1)/199)))**2)
+		ste.append(ste_inner)
 
 
-#calculate multiplier
-#
-
-multiplier = [];
-
-for index, each_record in enumerate(zcr):
-	if(each_record <= ste[index]):
-		multiplier.append(1)
-	else:
-		multiplier.append(0)
-
-print(multiplier);
-
-total = []
-
-for each_multiplier in multiplier:
-	total.extend([each_multiplier] * 200)
-
-padded_data = data;
-padded_data.extend([0]*padder)
-assert(len(padded_data) == len(total))
-
-multiplied = [x * y for x, y in zip(padded_data, total)]
+	assert(len(ste) == len(zcr))
 
 
-#First plot the multiplier
-#
+	#calculate multiplier
+	#
 
-plt.plot(numpy.asfarray(padded_data))
-plt.plot(numpy.asfarray(total))
-plt.savefig('amono_audio_data_all_processed_superimposed.png')
-plt.clf()
+	multiplier = [];
 
-plt.plot(numpy.asfarray(multiplied))
-plt.savefig('amono_audio_data_all_processed.png')
-plt.clf()
+	for index, each_record in enumerate(zcr):
+		if(each_record <= ste[index]):
+			multiplier.append(1)
+		else:
+			multiplier.append(0)
 
-sf.write('final.wav', multiplied, sample_rate)
+	print(multiplier);
 
-# Frame "multiplied" (which is already padded) with some overlap and calculate MFCC for each frame.
-# You get an vectors of MFCC coefficients
-# Store that in some db, look for how to build HMM based clasifier based on those MFCCs
-# Tell others to find how to use the classifer to get MFCC as input and get output as sequence of words
-# or phonemes
-# Build a phonetic dictionary
-# See YAHMM
+	total = []
 
-indexes = [ i for i, (x, y) in enumerate(zip(multiplier[:-1],multiplier[1:])) if x!=y]
+	for each_multiplier in multiplier:
+		total.extend([each_multiplier] * 200)
 
-pprint(indexes)
+	padded_data = data;
+	padded_data.extend([0]*padder)
+	assert(len(padded_data) == len(total))
 
-##Framing routine
-#
-#Do not neeed indexes, just do the thing in multiplied. 
-#
-#Use indexes for comparision of accuracy in Total number of words recognized Vs Actual number of words
-#
-#
+	multiplied = [x * y for x, y in zip(padded_data, total)]
 
-#Framing, each frame starts from 80th sample, with size 200
 
-#Using MFCC library, we can eradicate the following code:
-#
+	#First plot the multiplier
+	#
 
-mfcc_feat = mfcc(numpy.asarray(multiplied), sample_rate);
-pprint(mfcc_feat);
-pprint(len(mfcc_feat[0]))
+	plt.plot(numpy.asfarray(padded_data))
+	plt.plot(numpy.asfarray(total))
+	plt.savefig('amono_audio_data_all_processed_superimposed.png')
+	plt.clf()
+
+	plt.plot(numpy.asfarray(multiplied))
+	plt.savefig('amono_audio_data_all_processed.png')
+	plt.clf()
+
+	sf.write('final.wav', multiplied, sample_rate)
+
+	# Frame "multiplied" (which is already padded) with some overlap and calculate MFCC for each frame.
+	# You get an vectors of MFCC coefficients
+	# Store that in some db, look for how to build HMM based clasifier based on those MFCCs
+	# Tell others to find how to use the classifer to get MFCC as input and get output as sequence of words
+	# or phonemes
+	# Build a phonetic dictionary
+	# See YAHMM
+
+	indexes = [ i for i, (x, y) in enumerate(zip(multiplier[:-1],multiplier[1:])) if x!=y]
+
+	pprint(indexes)
+
+	##Framing routine
+	#
+	#Do not neeed indexes, just do the thing in multiplied. 
+	#
+	#Use indexes for comparision of accuracy in Total number of words recognized Vs Actual number of words
+	#
+	#
+
+	#Framing, each frame starts from 80th sample, with size 200
+
+	#Using MFCC library, we can eradicate the following code:
+	#
+
+	mfcc_feat = mfcc(numpy.asarray(multiplied), sample_rate);
+	pprint(mfcc_feat);
+	pprint(len(mfcc_feat[0]))
+	return mfcc_feat
 
 '''
 
@@ -334,5 +339,36 @@ for each_model in model:
 #Write a seperate module in GUI to load those HMM files and use that in testing data 
 
 
+
+## getMFCCFromFile('../recordings/all.ogg')
+## ^^ Above code works
+
+train_dir = os.path.join(os.getcwd(), "data", "train")
+test_dir = os.path.join(os.getcwd(), "data", "test")
+
+
+## Training HMM
+## Loop from zero to ten
+
+loop_range = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+
+for i, digit in enumerate(loop_range):
+	pass
+	# For each digit directory, list all files and loop
+	current_dir = os.path.join(train_dir, digit)
+	files_in_dir = [f for f in os.listdir(current_dir) if os.path.isfile(os.path.join(current_dir, f))]
+	for each_file in files_in_dir:
+		pass
+		# For each file, calculate MFCC and loop
+		mfcc_feature = getMFCCFromFile(os.path.join(current_dir, each_file))
+		mfcc_feature = mfcc_feature.tolist();
+		model[i].train(mfcc_feature)
+		pass
+
+## Training Complete
+
+## Testing HMM 
+#
+#
 
 
