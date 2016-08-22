@@ -396,3 +396,15 @@ accuracy = float(accurate)/(accurate+inaccurate)
 pprint("===============")
 print("Accuracy: ", accuracy)
 pprint("===============")
+
+# Open File and write HMM into it
+
+hmm_dir = os.path.join(os.getcwd(), "hmm")
+
+for each_model in model:
+	with open(os.path.join(hmm_dir, each_model.name + ".hmm"), mode='w') as filestream:
+		each_model.write(filestream)
+	#Closes Automatically 
+
+# File is written to ./hmm/<respective_name>.hmm 
+# Use those files in the GUI to consume it
