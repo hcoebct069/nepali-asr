@@ -67,7 +67,7 @@ def getMFCCFromFile(file_path='../recordings/all.ogg'):
 		ste.append(ste_inner)
 
 
-	assert(len(ste) == len(zcr))
+	#assert(len(ste) == len(zcr))
 
 
 	#calculate multiplier
@@ -90,7 +90,7 @@ def getMFCCFromFile(file_path='../recordings/all.ogg'):
 
 	padded_data = data;
 	padded_data.extend([0]*padder)
-	assert(len(padded_data) == len(total))
+	#assert(len(padded_data) == len(total))
 
 	multiplied = [x * y for x, y in zip(padded_data, total)]
 
