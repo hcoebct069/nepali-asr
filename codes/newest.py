@@ -361,14 +361,38 @@ for i, digit in enumerate(loop_range):
 		pass
 		# For each file, calculate MFCC and loop
 		mfcc_feature = getMFCCFromFile(os.path.join(current_dir, each_file))
-		mfcc_feature = mfcc_feature.tolist();
-		model[i].train(mfcc_feature)
+		mfcc_feature = mfcc_feature.tolist()
+		model[i].train([mfcc_feature])
 		pass
 
 ## Training Complete
 
 ## Testing HMM 
 #
-#
 
 
+accurate = 0
+inaccurate = 0 
+for i, digit in enumerate(loop_range):
+	pass
+	# For each digit directory, list all files and loop
+	current_dir = os.path.join(test_dir, digit)
+	files_in_dir = [f for f in os.listdir(current_dir) if os.path.isfile(os.path.join(current_dir, f))]
+	for each_file in files_in_dir:
+		pass
+		# For each file, calculate MFCC and loop
+		mfcc_feature = getMFCCFromFile(os.path.join(current_dir, each_file))
+		mfcc_feature = mfcc_feature.tolist()
+		prob_list = [m.log_probability(mfcc_feature) for m in model]
+		matched_model = prob_list.index(max(prob_list))
+		if(matched_model == i):
+			accurate = accurate + 1
+		else:
+			inaccurate = inaccurate + 1
+			pass
+		pass
+
+accuracy = float(accurate)/(accurate+inaccurate)
+pprint("===============")
+print("Accuracy: ", accuracy)
+pprint("===============")
